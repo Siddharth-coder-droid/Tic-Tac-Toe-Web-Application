@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: linear-gradient(145deg, #e2b67d, #d2a76d);
+            border: 2px solid #8b5e3c;
+            border-radius: 8px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .cell:hover {
+            background: linear-gradient(145deg, #d2a76d, #e2b67d);
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .winner {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+        .winner.win {
+            color: green;
+        }
+        .winner.tie {
+            color: orange;
+        }
+        .winner.lost {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board"></div>
+    <div class="winner" id="winner"></div>
+
+    <script>
+        const board = document.getElementById('board');
+        const winnerDisplay = document.getElementById('winner');
+        let currentPlayer = 'X';
+        const cells = [];
+
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]  // Diagonals
+            ];
+
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    winnerDisplay.textContent = `${currentPlayer} Wins!`;
+                    winnerDisplay.className = 'winner win';
+                    cells[a].style.backgroundColor = 'lightgreen';
+                    cells[b].style.backgroundColor = 'lightgreen';
+                    cells[c].style.backgroundColor = 'lightgreen';
+                    return true;
+                }
+            }
+
+            if (cells.every(cell => cell.textContent)) {
+                winnerDisplay.textContent = "It's a Tie!";
+                winnerDisplay.className = 'winner tie';
+                return true;
+            }
+
+            return false;
+        }
+
+        function handleClick(event) {
+            const cell = event.target;
+            if (cell.textContent || winnerDisplay.textContent) return;
+
+            cell.textContent = currentPlayer;
+            if (!checkWinner()) {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.addEventListener('click', handleClick);
+                board.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
